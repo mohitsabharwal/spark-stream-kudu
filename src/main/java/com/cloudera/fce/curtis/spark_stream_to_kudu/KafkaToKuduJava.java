@@ -52,7 +52,7 @@ public class KafkaToKuduJava {
       kafkaParams.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
       kafkaParams.put("auto.offset.reset", "earliest");
       kafkaParams.put("security.protocol", "SASL_PLAINTEXT");
-      kafkaParams.put("sasl.kerberos.service.name", "kafka");
+      kafkaParams.put("sasl.kerberos.service.name", "earliest");
 
 
       JavaInputDStream<ConsumerRecord<String, String>> dstream = KafkaUtils.createDirectStream(
