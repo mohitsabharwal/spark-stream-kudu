@@ -271,9 +271,8 @@ public class SparkStreamingRunner {
         // Method 2: The DataFrames API  provides the 'write' function (results
         //           in a Kudu UPSERT)
         final Map<String, String> kuduOptions = new HashMap<>();
-        kuduOptions.put("kudu.table",  kuduTableName);
         kuduOptions.put("kudu.master", kuduMasters);
-        kuduOptions.put("kudu.table", "impala::default." + kuduTableName);
+        kuduOptions.put("kudu.table", "impala::" + kuduTableName);
         resultsDataFrame.write().format("org.apache.kudu.spark.kudu").options(kuduOptions).mode("append").save();
 
         // Method 3: A SQL INSERT through SQLContext also results in a Kudu UPSERT
