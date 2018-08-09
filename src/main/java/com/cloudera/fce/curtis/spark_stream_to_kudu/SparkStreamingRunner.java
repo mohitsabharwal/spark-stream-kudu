@@ -6,6 +6,7 @@ import com.typesafe.config.Config;
 
 import com.typesafe.config.ConfigRenderOptions;
 import com.typesafe.config.ConfigValue;
+import org.apache.kudu.spark.kudu.KuduContext;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
@@ -228,6 +229,8 @@ public class SparkStreamingRunner {
           }
         });
 
+    final KuduContext kuduContext   = new KuduContext(kuduMasters, spark.sparkContext());
+
     JavaPairDStream<String, String> windowedStream = pairDStream.window(
         new Duration(windowMilliseconds));
     windowedStream.foreachRDD(new VoidFunction<JavaPairRDD<String, String>>() {
@@ -266,7 +269,7 @@ public class SparkStreamingRunner {
 
         // Method 1: All kudu operations can be used with KuduContext (INSERT, INSERT IGNORE,
         //           UPSERT, UPDATE, DELETE)
-        // kuduContext.upsertRows(resultsDataFrame, kuduTableName);
+//         kuduContext.upsertRows(resultsDataFrame, kuduTableName);
 
         // Method 2: The DataFrames API  provides the 'write' function (results
         //           in a Kudu UPSERT)
@@ -276,10 +279,10 @@ public class SparkStreamingRunner {
         resultsDataFrame.write().format("org.apache.kudu.spark.kudu").options(kuduOptions).mode("append").save();
 
         // Method 3: A SQL INSERT through SQLContext also results in a Kudu UPSERT
-        //           resultsDataFrame.registerTempTable("traffic_results");
-        //           spark.read().format("org.apache.kudu.spark.kudu").options(kuduOptions).load()
-        //                .registerTempTable(kuduTableName);
-        //           spark.sql("INSERT INTO TABLE `" + kuduTableName + "` SELECT * FROM traffic_results");
+//                   resultsDataFrame.registerTempTable("traffic_results");
+//                   spark.read().format("org.apache.kudu.spark.kudu").options(kuduOptions).load()
+//                        .registerTempTable(kuduTableName);
+//                   spark.sql("INSERT INTO TABLE `" + kuduTableName + "` SELECT * FROM traffic_results");
       }
     });
 
